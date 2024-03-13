@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 import pandas as pd
 
+
 #Link to list of exercises https://colab.research.google.com/drive/1XwQR4uX9uB1XiLYm1j4pxaET37A1B7JJ#scrollTo=1qN1KIJV7eKh
 
 ### TODO 2
