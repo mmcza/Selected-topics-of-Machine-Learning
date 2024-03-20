@@ -92,7 +92,6 @@ def task5():
     print("R2 score for Decision Tree Regression: "+str(r2_tree))
 
 
-
     plt.plot(X_test_b, y_test_b, 'bo', label='True values')
     plt.plot(X_test_b, y_pred_basic, 'go', label='Predicted values - Linear Regression')
     plt.plot(X_test_b, y_pred_tree, 'r*', label='Predicted values - Decision Tree Regression')
