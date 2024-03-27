@@ -14,6 +14,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.preprocessing import PolynomialFeatures, MinMaxScaler, StandardScaler
 from sklearn.inspection import DecisionBoundaryDisplay
 from mlxtend.plotting import plot_decision_regions
+
 def task1():
     battery_training_data = pd.read_csv('trainingdata.txt', header=None)
     battery_training_data.columns = ['charged', 'lasted']
