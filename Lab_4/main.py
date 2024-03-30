@@ -13,6 +13,9 @@ from sklearn import impute
 from ydata_profiling import ProfileReport
 import seaborn as sns
 import scipy
+from sklearn import svm, model_selection
+import pickle
+from sklearn.metrics import accuracy_score
 
 pd.set_option('display.max_columns', None)
 
@@ -174,8 +177,107 @@ def task4():
     plt.ylabel('mass')
     plt.show()
 
+def task5():
+    diabetes = fetch_openml("diabetes", version=1, as_frame=True)
+    # remove outliers using IsolationForest
+    Iso_Forest = sklearn.ensemble.IsolationForest(contamination=0.3)
+    Iso_Forest.fit(diabetes.data)
+    labels_Iso_Forest = Iso_Forest.predict(diabetes.data)
+    outliers_Iso_Forest = np.where(np.array(labels_Iso_Forest) == -1)
+    diabetes_Iso_Forest = diabetes.data.drop(outliers_Iso_Forest[0])
+    # remove outliers using LocalOutlierFactor
+    LOF = sklearn.neighbors.LocalOutlierFactor(contamination=0.3)
+    labels_LOF = LOF.fit_predict(diabetes.data)
+    outliers_LOF = np.where(np.array(labels_LOF) == -1)
+    diabetes_LOF = diabetes.data.drop(outliers_LOF[0])
+
+    plt.scatter(diabetes_Iso_Forest['plas'], diabetes_Iso_Forest['mass'])
+    plt.scatter(diabetes_LOF['plas'], diabetes_LOF['mass'])
+    plt.axvline(x=0)
+    plt.axhline(y=0)
+    plt.title('Pima Indians Diabetes Database')
+    plt.xlabel('plas')
+    plt.ylabel('mass')
+    plt.show()
+
+def task6():
+    diabetes = fetch_openml("diabetes", version=1, as_frame=True)
+    # remove outliers using IsolationForest
+    x = diabetes.data['plas']
+    y = diabetes.data['mass']
+    xx, yy = np.meshgrid(x, y)
+    Z = np.c_[xx.ravel(), yy.ravel()]
+    Iso_Forest = sklearn.ensemble.IsolationForest(contamination=0.3)
+    Iso_Forest.fit(Z)
+    labels_Iso_Forest = Iso_Forest.predict(Z)
+    Z = labels_Iso_Forest.reshape(xx.shape)
+    plt.contourf(xx, yy, Z, cmap=plt.cm.Blues_r)
+    plt.scatter(x, y)
+    plt.axvline(x=0)
+    plt.axhline(y=0)
+    plt.title('Pima Indians Diabetes Database')
+    plt.xlabel('plas')
+    plt.ylabel('mass')
+    plt.show()
+
+def task7_and_8():
+    iris = datasets.load_iris(as_frame=True)
+    # divide the dataset into training and testing
+    X_train, X_test, y_train, y_test = train_test_split(iris.data, iris.target, test_size=0.2, random_state=1, stratify=iris.target)
+    parameters = {
+        'kernel': ('linear', 'rbf'),
+        'C': [1, 10],
+        'gamma': [0.001, 0.0001]
+    }
+    clf = model_selection.GridSearchCV(svm.SVC(), parameters, cv=10)
+    clf.fit(X_train, y_train)
+
+    # save the best model to a file
+    best_model = clf.best_estimator_
+    with open('best_model.pkl', 'wb') as f:
+        pickle.dump(best_model, f)
+
+    pvt = pd.pivot_table(
+        pd.DataFrame(clf.cv_results_),
+        values='mean_test_score',
+        index='param_kernel',
+        columns='param_C'
+    )
+    ax = sns.heatmap(pvt)
+    plt.show()
+
+    # use RandomizedSearchCV
+    clf = model_selection.RandomizedSearchCV(svm.SVC(), parameters, cv=10)
+    clf.fit(X_train, y_train)
+
+    pvt = pd.pivot_table(
+        pd.DataFrame(clf.cv_results_),
+        values='mean_test_score',
+        index='param_kernel',
+        columns='param_C'
+    )
+    ax = sns.heatmap(pvt)
+    plt.show()
+
+def task8():
+    iris = datasets.load_iris(as_frame=True)
+    # divide the dataset into training and testing
+    X_train, X_test, y_train, y_test = train_test_split(iris.data, iris.target, test_size=0.2, random_state=1, stratify=iris.target)
+
+    # load the best model from a file
+    with open('best_model.pkl', 'rb') as f:
+        clf = pickle.load(f)
+
+    predicted = clf.predict(X_test)
+    accuracy = accuracy_score(y_test, predicted)
+    print(accuracy)
+
 if __name__ == '__main__':
     #task1()
     #task2()
     #task3()
-    task4()
+    #task4()
+    #task5()
+    #task6()
+    #task7_and_8()
+    task8()
