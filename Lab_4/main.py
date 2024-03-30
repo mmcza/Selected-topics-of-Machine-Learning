@@ -16,6 +16,7 @@ import scipy
 from sklearn import svm, model_selection
 import pickle
 from sklearn.metrics import accuracy_score
+from sklearn.model_selection import cross_val_score
 
 pd.set_option('display.max_columns', None)
 
@@ -271,6 +272,19 @@ def task8():
     predicted = clf.predict(X_test)
     accuracy = accuracy_score(y_test, predicted)
     print(accuracy)
+def task9():
+    diabetes = fetch_openml("diabetes", version=1, as_frame=True)
+    # remove outliers using IsolationForest
+    Iso_Forest = sklearn.ensemble.IsolationForest(contamination=0.3)
+    Iso_Forest.fit(diabetes.data)
+    labels_Iso_Forest = Iso_Forest.predict(diabetes.data)
+    outliers_Iso_Forest = np.where(np.array(labels_Iso_Forest) == -1)
+    diabetes_Iso_Forest = diabetes.data.drop(outliers_Iso_Forest[0])
+    diabetes.target = diabetes.target.drop(outliers_Iso_Forest[0])
+    diabetes.target = np.where(diabetes.target == 'tested_positive', 1, -1)
+    diabetes.target = np.where(diabetes.target == 'tested_negative', -1, 1)
+    scores = cross_val_score(Iso_Forest, diabetes_Iso_Forest, diabetes.target, cv=10, scoring='accuracy')
+    print(scores)
 
 if __name__ == '__main__':
     #task1()
@@ -280,4 +294,5 @@ if __name__ == '__main__':
     #task5()
     #task6()
     #task7_and_8()
-    task8()
+    #task8()
+    task9()
