@@ -2,3 +2,6 @@ scikit-learn
 matplotlib
 pandas
 mlxtend
+ydata-profiling
+seaborn
+scipy
