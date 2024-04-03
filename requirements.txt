@@ -5,3 +5,5 @@ mlxtend
 ydata-profiling
 seaborn
 scipy
+shap
+xgboost

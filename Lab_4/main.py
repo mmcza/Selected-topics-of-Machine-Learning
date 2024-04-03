@@ -17,6 +17,13 @@ from sklearn import svm, model_selection
 import pickle
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import StackingClassifier
+from sklearn.linear_model import RidgeCV
+import shap
+import xgboost as xgb
+from xgboost import plot_importance
 
 pd.set_option('display.max_columns', None)
 
@@ -282,9 +289,178 @@ def task9():
     diabetes_Iso_Forest = diabetes.data.drop(outliers_Iso_Forest[0])
     diabetes.target = diabetes.target.drop(outliers_Iso_Forest[0])
     diabetes.target = np.where(diabetes.target == 'tested_positive', 1, -1)
-    diabetes.target = np.where(diabetes.target == 'tested_negative', -1, 1)
     scores = cross_val_score(Iso_Forest, diabetes_Iso_Forest, diabetes.target, cv=10, scoring='accuracy')
     print(scores)
+
+def task10_and_11():
+    diabetes = fetch_openml("diabetes", version=1, as_frame=True)
+    # remove outliers using IsolationForest
+    Iso_Forest = sklearn.ensemble.IsolationForest(contamination=0.3)
+    Iso_Forest.fit(diabetes.data)
+    labels_Iso_Forest = Iso_Forest.predict(diabetes.data)
+    outliers_Iso_Forest = np.where(np.array(labels_Iso_Forest) == -1)
+    diabetes_Iso_Forest = diabetes.data.drop(outliers_Iso_Forest[0])
+    diabetes.target = diabetes.target.drop(outliers_Iso_Forest[0])
+    diabetes.target = np.where(diabetes.target == 'tested_positive', 1, -1)
+    scores = cross_val_score(Iso_Forest, diabetes_Iso_Forest, diabetes.target, cv=10, scoring='accuracy')
+    print(scores)
+
+    # create VotingClassifier with ExtraTreesClassifier and RandomForest
+    #clf1 = ExtraTreesClassifier()
+    clf1 = LogisticRegression(max_iter=1000, random_state=123)
+    clf2 = RandomForestClassifier()
+    clf3 = GaussianNB()
+    eclf = sklearn.ensemble.VotingClassifier(estimators=[('lr', clf1), ('rf', clf2), ('gn', clf3)], voting='soft')
+    sclf = StackingClassifier(estimators=[('lr', clf1), ('rf', clf2), ('gn', clf3)], final_estimator=LogisticRegression(max_iter=1000, random_state=123))
+    # predict class probabilities for all classifiers
+    probas = [c.fit(diabetes_Iso_Forest, diabetes.target).predict_proba(diabetes_Iso_Forest) for c in (clf1, clf2, clf3, eclf, sclf)]
+    #print(scores)
+    print(np.array(probas)[:, 0])
+
+    # get class probabilities for the first sample in the dataset
+    class1_1 = [pr[0, 0] for pr in probas]
+    class2_1 = [pr[0, 1] for pr in probas]
+
+    # plotting
+
+    N = 5  # number of groups
+    ind = np.arange(N)  # group positions
+    width = 0.35  # bar width
+
+    fig, ax = plt.subplots()
+
+    # bars for classifier 1-3
+    p1 = ax.bar(ind, np.hstack((class1_1[:-2], np.zeros(2))), width, color="green", edgecolor="k")
+    p2 = ax.bar(
+        ind + width,
+        np.hstack(([class2_1[:-2], np.zeros(2)])),
+        width,
+        color="lightgreen",
+        edgecolor="k",
+    )
+
+    # bars for VotingClassifier
+    p3 = ax.bar(ind, [0, 0, 0] + list(class1_1[-2:]), width, color="blue", edgecolor="k")
+    p4 = ax.bar(ind + width, [0, 0, 0] + list(class2_1[-2:]), width, color="steelblue", edgecolor="k")
+
+    # plot annotations
+    plt.axvline(2.8, color="k", linestyle="dashed")
+    ax.set_xticks(ind + width)
+    ax.set_xticklabels(
+        [
+            "LogisticRegression\nweight 1",
+            "GaussianNB\nweight 1",
+            "RandomForestClassifier\nweight 1",
+            "VotingClassifier\n(average probabilities)",
+            "StackingClassifier\n",
+        ],
+        rotation=40,
+        ha="right",
+    )
+    plt.ylim([0, 1])
+    plt.title("Class probabilities for sample 1 by different classifiers")
+    plt.legend([p1[0], p2[0]], ["class 1", "class 2"], loc="upper left")
+    plt.tight_layout()
+    plt.show()
+
+def task10_1():
+    diabetes = fetch_openml("diabetes", version=1, as_frame=True)
+    # remove outliers using IsolationForest
+    Iso_Forest = sklearn.ensemble.IsolationForest(contamination=0.3)
+    Iso_Forest.fit(diabetes.data)
+    labels_Iso_Forest = Iso_Forest.predict(diabetes.data)
+    outliers_Iso_Forest = np.where(np.array(labels_Iso_Forest) == -1)
+    diabetes_Iso_Forest = diabetes.data.drop(outliers_Iso_Forest[0])
+    diabetes.target = diabetes.target.drop(outliers_Iso_Forest[0])
+    diabetes.target = np.where(diabetes.target == 'tested_positive', 1, -1)
+
+    # create VotingClassifier with ExtraTreesClassifier and RandomForest
+    clf1 = LogisticRegression(max_iter=1000, random_state=123)
+    clf2 = RandomForestClassifier()
+    clf3 = GaussianNB()
+    eclf = sklearn.ensemble.VotingClassifier(estimators=[('lr', clf1), ('rf', clf2), ('gn', clf3)], voting='soft')
+    sclf = StackingClassifier(estimators=[('lr', clf1), ('rf', clf2), ('gn', clf3)], final_estimator=LogisticRegression(max_iter=1000, random_state=123))
+
+    # divide the dataset into training and testing
+    X_train, X_test, y_train, y_test = train_test_split(diabetes_Iso_Forest, diabetes.target, test_size=0.2, random_state=1, stratify=diabetes.target)
+
+    accuracy_list = []
+    best_accuracy = -1
+    best_classifier = None
+    classifiers = [clf1, clf2, clf3, eclf, sclf]
+
+    for classifier in classifiers:
+        classifier.fit(X_train, y_train)
+        predictions = classifier.predict(X_test)
+        score = accuracy_score(y_test, predictions)
+        accuracy_list.append(score)
+
+        if score > best_accuracy:
+            best_accuracy = score
+            best_classifier = classifier
+
+    print(accuracy_list)
+    with open('best_model_task10.pkl', 'wb') as f:
+        pickle.dump(best_classifier, f)
+
+def task12():
+    diabetes = fetch_openml("diabetes", version=1, as_frame=True)
+    # remove outliers using IsolationForest
+    Iso_Forest = sklearn.ensemble.IsolationForest(contamination=0.3)
+    Iso_Forest.fit(diabetes.data)
+    labels_Iso_Forest = Iso_Forest.predict(diabetes.data)
+    outliers_Iso_Forest = np.where(np.array(labels_Iso_Forest) == -1)
+    diabetes_Iso_Forest = diabetes.data.drop(outliers_Iso_Forest[0])
+    diabetes.target = diabetes.target.drop(outliers_Iso_Forest[0])
+    diabetes.target = np.where(diabetes.target == 'tested_positive', 1, -1)
+
+    # divide the dataset into training and testing
+    X_train, X_test, y_train, y_test = train_test_split(diabetes_Iso_Forest, diabetes.target, test_size=0.2, random_state=1, stratify=diabetes.target)
+
+    #create random forrest classifier
+    clf = RandomForestClassifier()
+    clf.fit(X_train, y_train)
+    predictions = clf.predict(X_test)
+    # Get feature importances
+    importances = clf.feature_importances_
+
+    # Plot them
+    plt.figure(figsize=(10, 5))
+    plt.title("Feature importances")
+    plt.bar(range(X_train.shape[1]), importances, color="r", align="center")
+    plt.xticks(range(X_train.shape[1]), X_train.columns, rotation='vertical')
+    plt.xlim([-1, X_train.shape[1]])
+    plt.show()
+
+    # Create a TreeExplainer
+    explainer = shap.TreeExplainer(clf)
+    shap_values = explainer.shap_values(X_test)
+    shap.summary_plot(shap_values, X_test)
+
+def task13():
+    diabetes = fetch_openml("diabetes", version=1, as_frame=True)
+    # remove outliers using IsolationForest
+    Iso_Forest = sklearn.ensemble.IsolationForest(contamination=0.3)
+    Iso_Forest.fit(diabetes.data)
+    labels_Iso_Forest = Iso_Forest.predict(diabetes.data)
+    outliers_Iso_Forest = np.where(np.array(labels_Iso_Forest) == -1)
+    diabetes_Iso_Forest = diabetes.data.drop(outliers_Iso_Forest[0])
+    diabetes.target = diabetes.target.drop(outliers_Iso_Forest[0])
+    diabetes.target = np.where(diabetes.target == 'tested_positive', 1, 0)
+
+    # divide the dataset into training and testing
+    X_train, X_test, y_train, y_test = train_test_split(diabetes_Iso_Forest, diabetes.target, test_size=0.2, random_state=1, stratify=diabetes.target)
+
+    # Assume X_train and y_train are your training data and labels
+    model = xgb.XGBClassifier()
+    model.fit(X_train, y_train)
+    model.predict(X_test)
+    score = model.score(X_test, y_test)
+    print(score)
+
+    # Plot feature importance
+    plot_importance(model)
+    plt.show()
 
 if __name__ == '__main__':
     #task1()
@@ -295,4 +471,8 @@ if __name__ == '__main__':
     #task6()
     #task7_and_8()
     #task8()
-    task9()
+    #task9()
+    #task10_and_11()
+    #task10_1()
+    #task12()
+    task13()
