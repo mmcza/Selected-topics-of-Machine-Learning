@@ -7,3 +7,4 @@ seaborn
 scipy
 shap
 xgboost
+missingno
