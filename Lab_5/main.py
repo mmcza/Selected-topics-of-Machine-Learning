@@ -3,14 +3,29 @@ from sklearn.datasets import fetch_openml
 import pandas as pd
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import KNNImputer, IterativeImputer
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, RobustScaler
+from sklearn.model_selection import train_test_split, cross_val_score, RandomizedSearchCV
 import numpy as np
+from scipy.stats import uniform, randint
 import missingno as msno
+
+
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.ensemble import RandomForestClassifier
+from xgboost import plot_importance
+
 from sklearn.metrics import accuracy_score
+
+from sklearn.ensemble import RandomForestClassifier, VotingClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+import xgboost as xgb
+from sklearn.naive_bayes import GaussianNB
+import lightgbm as lgb
+
+from scipy import stats
 
 def main():
     # import the data
@@ -57,12 +72,19 @@ def main():
     y_test_guess = np.random.choice([0, 1], p=[0.625, 0.375], size=X_test.shape[0])
     #print(y_test_guess)
     # calculate accuracy
+    accuracy_dict = {}
     accuracy = (np.int_(y_test.to_numpy()) == y_test_guess).mean()
-    print('Random guess accuracy: ', accuracy)
+    #print('Random guess accuracy: ', accuracy)
+    accuracy_dict['Random guess'] = accuracy
 
     # check if someone was travelling alone
     X_train['is_alone'] = (X_train['family_size'] == 1).astype(int)
     X_test['is_alone'] = (X_test['family_size'] == 1).astype(int)
+
+    # check if someone had bough multiple cabins by counting number of letters in cabin column
+    X_train['multiple_cabins'] = X_train['cabin'].apply(lambda x: -1 if pd.isna(x) else (1 if len(x.split()) > 1 else 0))
+    X_test['multiple_cabins'] = X_test['cabin'].apply(lambda x: -1 if pd.isna(x) else (1 if len(x.split()) > 1 else 0))
+    #print(X_train['multiple_cabins'].value_counts())
 
     # impute missing values for fare and fare_per_person by using data from sibsp, parch and pclass columns and KNNImputer
     imputer = KNNImputer(n_neighbors=2, missing_values=np.nan)
@@ -111,12 +133,12 @@ def main():
 
     # find correlation between columns
     corr = X_train[['deck_encoded', 'pclass', 'fare_per_person', 'family_size', 'title_categorical_encoded', 'sex_encoded',
-                    'embarked_encoded', 'sibsp', 'parch', 'age_group_encoded', 'is_alone']].corr()
+                    'embarked_encoded', 'sibsp', 'parch', 'age_group_encoded', 'is_alone', 'multiple_cabins']].corr()
 
     # find correlation between columns where deck is not missing
     corr_no_missing = X_train[X_train['deck_encoded'] != 7][['deck_encoded', 'pclass', 'fare_per_person', 'family_size',
                                         'title_categorical_encoded', 'sex_encoded', 'embarked_encoded', 'sibsp',
-                                        'parch', 'age_group_encoded', 'is_alone']].corr()
+                                        'parch', 'age_group_encoded', 'is_alone', 'multiple_cabins']].corr()
 
     # replacing missing values in deck column with -1
     X_train['deck_encoded_no_missing'] = X_train['deck_encoded'].replace(7, -1)
@@ -134,7 +156,7 @@ def main():
 
     # check correlation after imputing missing values
     corr_imputed = X_train[['deck_encoded_no_missing', 'pclass', 'fare_per_person', 'family_size', 'title_categorical_encoded', 'sex_encoded',
-                    'embarked_encoded', 'sibsp', 'parch', 'age_group_encoded', 'is_alone']].corr()
+                    'embarked_encoded', 'sibsp', 'parch', 'age_group_encoded', 'is_alone', 'multiple_cabins']].corr()
 
     # Create subplots
     fig, axes = plt.subplots(3, 1, figsize=(5, 15))
@@ -157,19 +179,19 @@ def main():
 
     # impute missing values for age_group_encoded column by using IterativeImputer
     age_group_imputer = IterativeImputer(max_iter=10, random_state=42, missing_values=-1)
-    X_train[['age_group_encoded', 'family_size', 'title_categorical_encoded', 'is_alone', 'parch']] = (
-        age_group_imputer.fit_transform(X_train[['age_group_encoded', 'family_size', 'title_categorical_encoded', 'is_alone', 'parch']]))
-    X_test[['age_group_encoded', 'family_size', 'title_categorical_encoded', 'is_alone', 'parch']] = (age_group_imputer.transform(
-        X_test[['age_group_encoded', 'family_size', 'title_categorical_encoded', 'is_alone', 'parch']]))
+    X_train[['age_group_encoded', 'sibsp', 'title_categorical_encoded', 'is_alone', 'parch']] = (
+        age_group_imputer.fit_transform(X_train[['age_group_encoded', 'sibsp', 'title_categorical_encoded', 'is_alone', 'parch']]))
+    X_test[['age_group_encoded', 'sibsp', 'title_categorical_encoded', 'is_alone', 'parch']] = (age_group_imputer.transform(
+        X_test[['age_group_encoded', 'sibsp', 'title_categorical_encoded', 'is_alone', 'parch']]))
 
     # check correlation after imputing missing values
     corr_no_missing_age = X_train[pd.notna(X_train['age'])][['deck_encoded', 'pclass', 'fare_per_person', 'family_size',
                                         'title_categorical_encoded', 'sex_encoded', 'embarked_encoded', 'sibsp',
-                                        'parch', 'age_group_encoded', 'is_alone']].corr()
+                                        'parch', 'age_group_encoded', 'is_alone', 'multiple_cabins']].corr()
 
     corr_imputed_age = X_train[['deck_encoded', 'pclass', 'fare_per_person', 'family_size',
                                         'title_categorical_encoded', 'sex_encoded', 'embarked_encoded', 'sibsp',
-                                        'parch', 'age_group_encoded', 'is_alone']].corr()
+                                        'parch', 'age_group_encoded', 'is_alone', 'multiple_cabins']].corr()
 
     # Create subplots
     fig, axes = plt.subplots(3, 1, figsize=(5, 15))
@@ -191,6 +213,29 @@ def main():
     X_test[['embarked_encoded', 'fare_per_person', 'deck_encoded', 'pclass']] = (
         embarked_imputer.transform(X_test[['embarked_encoded', 'fare_per_person', 'deck_encoded', 'pclass']]))
 
+    X_train['fare_per_person'].plot.hist(bins=10, color='skyblue', edgecolor='black')
+
+    # create a robust scaller
+    scaller = RobustScaler()
+    X_train['fare_per_person_scaled'] = scaller.fit_transform(X_train[['fare_per_person']])
+    # create bins
+    bins = [-1, -0.25, -0.05, 0.1, 1.5, 4, np.inf]
+    # create labels
+    labels = np.linspace(0, 1, len(bins)-1)
+    # create new column with scaled values
+    X_train['fare_per_person_binned'] = pd.cut(X_train['fare_per_person_scaled'], bins=bins, labels=labels).astype(float)
+    # plot histogram
+    X_train['fare_per_person_binned'].plot.hist(bins=10, color='green', edgecolor='black')
+    X_test['fare_per_person_scaled'] = scaller.transform(X_test[['fare_per_person']])
+    X_test['fare_per_person_binned'] = pd.cut(X_test['fare_per_person_scaled'], bins=bins, labels=labels).astype(float)
+    #X_train['fare_per_person_scaled'].plot.hist(bins=10, color='red', edgecolor='black')
+
+
+    # Customize the plot (optional)
+    plt.title('Histogram of fare_per_person')
+    plt.xlabel('Values')
+    plt.ylabel('Frequency')
+    #plt.show()
 
     # check final correlation
     data_train = pd.concat([X_train, y_train], axis=1)
@@ -198,25 +243,118 @@ def main():
     correlation_matrix = data_train[['survived', 'pclass', 'sibsp', 'parch',
        'family_size', 'fare_per_person', 'is_alone', 'deck_encoded',
        'age_group_encoded', 'title_categorical_encoded', 'sex_encoded',
-       'embarked_encoded', 'deck_encoded_no_missing']].corr()
+       'embarked_encoded', 'deck_encoded_no_missing', 'multiple_cabins', 'fare_per_person_binned']].corr()
 
     # Create plot
     sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
     plt.title('Final correlation Matrix')
     plt.show()
 
+    ### Classification
+
+    ## Basic classifiers
+
     # create Random Forest Classifier
     rfc_clf = RandomForestClassifier(random_state=42)
-    rfc_clf.fit(X_train[['pclass', 'fare_per_person', 'is_alone', 'deck_encoded_no_missing',
-       'age_group_encoded', 'title_categorical_encoded', 'sex_encoded',
-       'embarked_encoded']], y_train)
-    rfc_prediction = rfc_clf.predict(X_test[['pclass', 'fare_per_person', 'is_alone', 'deck_encoded_no_missing',
-       'age_group_encoded', 'title_categorical_encoded', 'sex_encoded',
-       'embarked_encoded']])
+    # create a Logistic Regression Classifier
+    lrc_clf = LogisticRegression(random_state=42, max_iter=1000)
+    # create a Decision Tree Classifier
+    dtc_clf = DecisionTreeClassifier(random_state=42)
+    # create a SVM Classifier
+    svm_clf = SVC(random_state=42, probability=True)
+    # create a KNN Classifier
+    knn_clf = KNeighborsClassifier(n_neighbors=5)
+    # create a Naive Bayes Classifier
+    nb_clf = GaussianNB()
+    # create a XGBoost Classifier
+    xgb_clf = xgb.XGBClassifier(random_state=42)
+    # create a LightGBM Classifier
+    lgbm_clf = lgb.LGBMClassifier(random_state=42, verbosity=0)
+    # create a Voting Classifier
+    voting_clf_h = VotingClassifier(estimators=[('rf', rfc_clf), ('lr', lrc_clf), ('dt', dtc_clf), ('svm', svm_clf),
+                                              ('knn', knn_clf), ('nb', nb_clf), ('xgb', xgb_clf), ('lgbm', lgbm_clf)], voting='hard')
+    voting_clf_s = VotingClassifier(estimators=[('rf', rfc_clf), ('lr', lrc_clf), ('dt', dtc_clf), ('svm', svm_clf),
+                                              ('knn', knn_clf), ('nb', nb_clf), ('xgb', xgb_clf), ('lgbm', lgbm_clf)], voting='soft')
 
-    # calculate accuracy
-    accuracy_rfc = accuracy_score(y_test, rfc_prediction)
-    print("Accuracy of prediction for Random Forest Classifier is: "+str(accuracy_rfc))
+    y_train = y_train.astype(int)
+    y_test = y_test.astype(int)
+
+    classifiers = {'Decision Tree Classifier': dtc_clf, 'Random Forest Classifier': rfc_clf, 'Logistic Regression Classifier': lrc_clf,
+                   'SVM Classifier': svm_clf, 'KNN Classifier': knn_clf, 'Naive Bayes Classifier': nb_clf,
+                   'XGBoost Classifier': xgb_clf, 'LightGBM Classifier': lgbm_clf, 'Voting Classifier Hard': voting_clf_h,
+                   'Voting Classifier Soft': voting_clf_s}
+
+
+    all_usable_features = ['pclass', 'sibsp', 'parch',
+       'family_size', 'fare_per_person', 'is_alone', 'deck_encoded',
+       'age_group_encoded', 'title_categorical_encoded', 'sex_encoded',
+       'embarked_encoded', 'deck_encoded_no_missing', 'multiple_cabins', 'fare_per_person_binned', 'fare']
+
+    cross_val_dict = {}
+    for key, value in classifiers.items():
+
+        # do cross validation
+        cv_scores = cross_val_score(value, X_train[all_usable_features], y_train, cv=10).mean()
+        cross_val_dict[key+" basic"] = cv_scores
+
+        value.fit(X_train[all_usable_features], y_train)
+        prediction = value.predict(X_test[all_usable_features])
+        # calculate accuracy
+        accuracy = accuracy_score(y_test, prediction)
+        accuracy_dict[key+" basic"] = accuracy
+        if key == 'XGBoost Classifier':
+            # plot feature importance
+            plot_importance(value)
+
+    plt.show()
+
+    # ## Hyperparameter tuning
+    # # create a parameter grid for Random Forest Classifier
+    # param_grid_rfc = {'n_estimators': randint(10, 1000), 'max_depth': randint(1, 100), 'min_samples_split': randint(2, 20),
+    #                   'min_samples_leaf': randint(1, 20), 'max_features': uniform(0, 1)}
+    # # create a parameter grid for Logistic Regression Classifier
+    # param_grid_lrc = {'C': uniform(0, 10), 'penalty': ['l1', 'l2']}
+    # # create a parameter grid for Decision Tree Classifier
+    # param_grid_dtc = {'max_depth': randint(1, 100), 'min_samples_split': randint(2, 20), 'min_samples_leaf': randint(1, 20)}
+    # # create a parameter grid for SVM Classifier
+    # param_grid_svm = {'C': uniform(0, 10), 'gamma': ['scale', 'auto'], 'kernel': ['linear', 'poly', 'rbf', 'sigmoid']}
+    # # create a parameter grid for KNN Classifier
+    # param_grid_knn = {'n_neighbors': randint(1, 20), 'weights': ['uniform', 'distance']}
+    # # create a parameter grid for Naive Bayes Classifier
+    # param_grid_nb = {}
+    # # create a parameter grid for XGBoost Classifier
+    # param_grid_xgb = {'n_estimators': randint(10, 1000), 'max_depth': randint(1, 100), 'learning_rate': uniform(0, 1)}
+    # # create a parameter grid for LightGBM Classifier
+    # param_grid_lgbm = {'n_estimators': randint(10, 1000), 'max_depth': randint(1, 100), 'learning_rate': uniform(0, 1)}
+    #
+    # param_grids = {
+    #     'Decision Tree Classifier': param_grid_dtc,
+    #     'Random Forest Classifier': param_grid_rfc,
+    #     'Logistic Regression Classifier': param_grid_lrc,
+    #     'SVM Classifier': param_grid_svm,
+    #     'KNN Classifier': param_grid_knn,
+    #     'Naive Bayes Classifier': param_grid_nb,
+    #     'XGBoost Classifier': param_grid_xgb,
+    #     'LightGBM Classifier': param_grid_lgbm,
+    # }
+    #
+    # best_estimators = {}
+    # for key, value in classifiers.items():
+    #     # create a RandomizedSearchCV
+    #     rscv = RandomizedSearchCV(value, param_distributions=param_grids[key], n_iter=10, cv=10, random_state=42, verbose=2)
+    #     rscv.fit(X_train[all_usable_features], y_train)
+    #     best_estimators[key] = rscv.best_estimator_
+    #     # predict values
+    #     prediction = rscv.best_estimator_.predict(X_test[all_usable_features])
+    #     # calculate accuracy
+    #     accuracy = accuracy_score(y_test, prediction)
+    #     accuracy_dict[key+" tuned"] = accuracy
+    #     print("Finished tuning for: ", key)
+
+    # print cross validation scores and accuracy
+    print(cross_val_dict)
+    print(accuracy_dict)
+    #print(best_estimators)
 
 if __name__ == "__main__":
     main()
