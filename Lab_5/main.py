@@ -9,7 +9,6 @@ import numpy as np
 from scipy.stats import uniform, randint
 import missingno as msno
 
-
 import matplotlib.pyplot as plt
 import seaborn as sns
 from xgboost import plot_importance
@@ -25,7 +24,9 @@ import xgboost as xgb
 from sklearn.naive_bayes import GaussianNB
 import lightgbm as lgb
 
-from scipy import stats
+from itertools import combinations
+import warnings
+import json
 
 def main():
     # import the data
@@ -288,13 +289,16 @@ def main():
     all_usable_features = ['pclass', 'sibsp', 'parch',
        'family_size', 'fare_per_person', 'is_alone', 'deck_encoded',
        'age_group_encoded', 'title_categorical_encoded', 'sex_encoded',
-       'embarked_encoded', 'deck_encoded_no_missing', 'multiple_cabins', 'fare_per_person_binned', 'fare']
+       'embarked_encoded', 'deck_encoded_no_missing', 'multiple_cabins', 'fare_per_person_binned', 'fare', 'fare_per_person_scaled']
+
+    # Filter XGBoost warnings
+    warnings.filterwarnings('once', module='xgboost')
 
     cross_val_dict = {}
     for key, value in classifiers.items():
 
         # do cross validation
-        cv_scores = cross_val_score(value, X_train[all_usable_features], y_train, cv=10).mean()
+        cv_scores = cross_val_score(value, X_train[all_usable_features], y_train, cv=10, n_jobs=-1).mean()
         cross_val_dict[key+" basic"] = cv_scores
 
         value.fit(X_train[all_usable_features], y_train)
@@ -308,53 +312,230 @@ def main():
 
     plt.show()
 
-    # ## Hyperparameter tuning
-    # # create a parameter grid for Random Forest Classifier
-    # param_grid_rfc = {'n_estimators': randint(10, 1000), 'max_depth': randint(1, 100), 'min_samples_split': randint(2, 20),
-    #                   'min_samples_leaf': randint(1, 20), 'max_features': uniform(0, 1)}
-    # # create a parameter grid for Logistic Regression Classifier
-    # param_grid_lrc = {'C': uniform(0, 10), 'penalty': ['l1', 'l2']}
-    # # create a parameter grid for Decision Tree Classifier
-    # param_grid_dtc = {'max_depth': randint(1, 100), 'min_samples_split': randint(2, 20), 'min_samples_leaf': randint(1, 20)}
-    # # create a parameter grid for SVM Classifier
-    # param_grid_svm = {'C': uniform(0, 10), 'gamma': ['scale', 'auto'], 'kernel': ['linear', 'poly', 'rbf', 'sigmoid']}
-    # # create a parameter grid for KNN Classifier
-    # param_grid_knn = {'n_neighbors': randint(1, 20), 'weights': ['uniform', 'distance']}
-    # # create a parameter grid for Naive Bayes Classifier
-    # param_grid_nb = {}
-    # # create a parameter grid for XGBoost Classifier
-    # param_grid_xgb = {'n_estimators': randint(10, 1000), 'max_depth': randint(1, 100), 'learning_rate': uniform(0, 1)}
-    # # create a parameter grid for LightGBM Classifier
-    # param_grid_lgbm = {'n_estimators': randint(10, 1000), 'max_depth': randint(1, 100), 'learning_rate': uniform(0, 1)}
-    #
-    # param_grids = {
-    #     'Decision Tree Classifier': param_grid_dtc,
-    #     'Random Forest Classifier': param_grid_rfc,
-    #     'Logistic Regression Classifier': param_grid_lrc,
-    #     'SVM Classifier': param_grid_svm,
-    #     'KNN Classifier': param_grid_knn,
-    #     'Naive Bayes Classifier': param_grid_nb,
-    #     'XGBoost Classifier': param_grid_xgb,
-    #     'LightGBM Classifier': param_grid_lgbm,
-    # }
-    #
-    # best_estimators = {}
-    # for key, value in classifiers.items():
-    #     # create a RandomizedSearchCV
-    #     rscv = RandomizedSearchCV(value, param_distributions=param_grids[key], n_iter=10, cv=10, random_state=42, verbose=2)
-    #     rscv.fit(X_train[all_usable_features], y_train)
-    #     best_estimators[key] = rscv.best_estimator_
-    #     # predict values
-    #     prediction = rscv.best_estimator_.predict(X_test[all_usable_features])
-    #     # calculate accuracy
-    #     accuracy = accuracy_score(y_test, prediction)
-    #     accuracy_dict[key+" tuned"] = accuracy
-    #     print("Finished tuning for: ", key)
+    ### check different features
+
+    # create a list of all combinations
+    all_combinations = []
+
+    # Generate all combinations of all lengths
+    for r in range(1, len(all_usable_features) + 1):
+        combinations_object = combinations(all_usable_features, r)
+        combinations_list = list(combinations_object)
+        all_combinations += combinations_list
+
+    np.random.seed(42)
+    #print(len(all_combinations))
+    num_of_combinations_to_check = 300
+    combinations_to_check = np.random.choice(len(all_combinations), num_of_combinations_to_check, replace=False)
+
+    accuracy_for_combinations = {}
+    cross_val_for_combinations = {}
+    # initialize a dictionary to store feature importance values
+    feature_importance_values = {feature: [0, 0, 0] for feature in X_train.columns}
+
+    for index, i in enumerate(combinations_to_check):
+        curr_combination = list(all_combinations[i])
+        # do cross validation
+        cv_scores = cross_val_score(xgb_clf, X_train[curr_combination], y_train, cv=10, n_jobs=-1, verbose=0).mean()
+        cross_val_for_combinations[tuple(curr_combination)] = [cv_scores, 'xgb']
+        xgb_clf.fit(X_train[curr_combination], y_train)
+        prediction = xgb_clf.predict(X_test[curr_combination])
+        # calculate accuracy
+        accuracy = accuracy_score(y_test, prediction)
+        accuracy_for_combinations[tuple(curr_combination)] = [accuracy, 'xgb']
+
+        for feature, importance in zip(curr_combination, xgb_clf.feature_importances_):
+            feature_importance_values[feature][0] += importance
+            feature_importance_values[feature][1] += 1
+            feature_importance_values[feature][2] += cv_scores
+
+        # do cross validation
+        cv_scores = cross_val_score(rfc_clf, X_train[curr_combination], y_train, cv=10, n_jobs=-1).mean()
+        cross_val_for_combinations[tuple(curr_combination)] = [cv_scores, 'rfc']
+        rfc_clf.fit(X_train[curr_combination], y_train)
+        prediction = rfc_clf.predict(X_test[curr_combination])
+        # calculate accuracy
+        accuracy = accuracy_score(y_test, prediction)
+        accuracy_for_combinations[tuple(curr_combination)] = [accuracy, 'rfc']
+        print("Finished cobinations: ", index, " out of ", num_of_combinations_to_check)
+
+    # sort the accuracy_for_combinations dictionary and cross_val_for_combinations dictionary
+    accuracy_for_combinations_sorted = dict(sorted(accuracy_for_combinations.items(), key=lambda item: item[1][0], reverse=True))
+    cross_val_for_combinations_sorted = dict(sorted(cross_val_for_combinations.items(), key=lambda item: item[1][0], reverse=True))
+
+    # calculate mean feature importance values
+    for feature in feature_importance_values:
+        if feature_importance_values[feature][1] != 0:
+            feature_importance_values[feature][0] /= feature_importance_values[feature][1]
+            feature_importance_values[feature][2] /= feature_importance_values[feature][1]
+
+    # sort the feature_importance_values dictionary
+    feature_importance_values_sorted = dict(sorted(feature_importance_values.items(), key=lambda item: item[1][0], reverse=True))
+
+    print(accuracy_for_combinations_sorted)
+    print(cross_val_for_combinations_sorted)
+    print(feature_importance_values_sorted)
+
+    # # print cross validation scores and accuracy
+    # print(cross_val_dict)
+    # print(accuracy_dict)
+    # #print(best_estimators)
+
+    ### hyperparameter tuning for different combinations of features
+
+    # create a list of combinations to check
+    combinations_to_check = []
+    for i, key in enumerate(cross_val_for_combinations_sorted.items()):
+        if i >= 10:
+            break
+        combinations_to_check.append(list(key[0]))
+
+    # create a vector of 5 most important features
+    most_important_features = [feature for feature in feature_importance_values_sorted][:5]
+    for i, key in enumerate(feature_importance_values_sorted):
+        if i >= 5:
+            combinations_to_check.append(list(most_important_features))
+            most_important_features.append(key)
+        if i >= 10:
+            break
+
+    # create a parameter grid for Random Forest Classifier
+    param_grid_rfc = {'n_estimators': randint(10, 1000), 'max_depth': randint(1, 100), 'min_samples_split': randint(2, 20),
+                      'min_samples_leaf': randint(1, 20), 'max_features': uniform(0, 1)}
+    # create a parameter grid for Logistic Regression Classifier
+    param_grid_lrc = {'C': uniform(0, 10), 'penalty': ['l1', 'l2']}
+    # create a parameter grid for Decision Tree Classifier
+    param_grid_dtc = {'max_depth': randint(1, 100), 'min_samples_split': randint(2, 20), 'min_samples_leaf': randint(1, 20)}
+    # create a parameter grid for SVM Classifier
+    param_grid_svm = {'C': uniform(0, 10), 'gamma': ['scale', 'auto']}
+    # create a parameter grid for KNN Classifier
+    param_grid_knn = {'n_neighbors': randint(1, 20), 'weights': ['uniform', 'distance']}
+    # create a parameter grid for Naive Bayes Classifier
+    param_grid_nb = {}
+    # create a parameter grid for XGBoost Classifier
+    param_grid_xgb = {'n_estimators': randint(10, 1000), 'max_depth': randint(1, 100), 'learning_rate': uniform(0, 1)}
+    # create a parameter grid for LightGBM Classifier
+    param_grid_lgbm = {'n_estimators': randint(10, 1000), 'max_depth': randint(1, 100), 'learning_rate': uniform(0, 1)}
+
+    param_grids = {
+        'Decision Tree Classifier': param_grid_dtc,
+        'Random Forest Classifier': param_grid_rfc,
+        'Logistic Regression Classifier': param_grid_lrc,
+        'SVM Classifier': param_grid_svm,
+        'KNN Classifier': param_grid_knn,
+        'Naive Bayes Classifier': param_grid_nb,
+        'XGBoost Classifier': param_grid_xgb,
+        'LightGBM Classifier': param_grid_lgbm,
+    }
+
+    classifiers_for_tuning = {'Decision Tree Classifier': dtc_clf, 'Random Forest Classifier': rfc_clf, 'Logistic Regression Classifier': lrc_clf,
+                   'SVM Classifier': svm_clf ,'KNN Classifier': knn_clf,
+                   'XGBoost Classifier': xgb_clf, 'LightGBM Classifier': lgbm_clf, 'Voting Classifier Hard': voting_clf_h,
+                   'Voting Classifier Soft': voting_clf_s}
+
+    best_estimators = {}
+    for key, value in classifiers_for_tuning.items():
+        if key == 'Voting Classifier Soft' or key == 'Voting Classifier Hard':
+            continue
+        # create a RandomizedSearchCV
+        rscv = RandomizedSearchCV(value, param_distributions=param_grids[key], n_iter=20, cv=10, random_state=42, verbose=2,
+                                  n_jobs=-1, scoring='accuracy')
+        rscv.fit(X_train[all_usable_features], y_train)
+        best_estimators[key+" tuned "+str(all_usable_features)] = rscv.best_estimator_
+        # predict values
+        prediction = rscv.best_estimator_.predict(X_test[all_usable_features])
+        # calculate accuracy
+        accuracy = accuracy_score(y_test, prediction)
+        accuracy_dict[key+" tuned "+str(all_usable_features)] = accuracy
+        cross_val_dict[key+" tuned "+str(all_usable_features)] = rscv.best_score_
+        print("Finished tuning for: ", key)
+
+    # create a list of tuples of the best estimators for Voting Classifier
+    best_estimators_list = [(key, value) for key, value in best_estimators.items() if key != 'Naive Bayes Classifier']
+
+    # create a new Voting Classifier with best estimators
+    voting_clf_tuned_h = VotingClassifier(estimators=best_estimators_list, voting='hard')
+    voting_clf_tuned_s = VotingClassifier(estimators=best_estimators_list, voting='soft')
+
+    # fit the Voting Classifiers
+    voting_clf_tuned_h.fit(X_train[all_usable_features], y_train)
+    voting_clf_tuned_s.fit(X_train[all_usable_features], y_train)
+    # predict values
+    prediction_h = voting_clf_tuned_h.predict(X_test[all_usable_features])
+    prediction_s = voting_clf_tuned_s.predict(X_test[all_usable_features])
+    # calculate accuracy
+    accuracy_h = accuracy_score(y_test, prediction_h)
+    accuracy_s = accuracy_score(y_test, prediction_s)
+    accuracy_dict["Voting Classifier Hard tuned "+str(all_usable_features)] = accuracy_h
+    accuracy_dict["Voting Classifier Soft tuned "+str(all_usable_features)] = accuracy_s
+    cross_val_dict["Voting Classifier Hard tuned "+str(all_usable_features)] = voting_clf_tuned_h.score(X_train[all_usable_features], y_train)
+    cross_val_dict["Voting Classifier Soft tuned "+str(all_usable_features)] = voting_clf_tuned_s.score(X_train[all_usable_features], y_train)
 
     # print cross validation scores and accuracy
-    print(cross_val_dict)
-    print(accuracy_dict)
+    #print(cross_val_dict)
+    #print(accuracy_dict)
     #print(best_estimators)
+
+
+    # create a loop to check different combinations of features and use different models and tune their hyperparameters
+    for features in combinations_to_check:
+        curr_features = features
+        print("Checking features: ", curr_features)
+        for key, value in classifiers_for_tuning.items():
+            if key == 'Voting Classifier Soft' or key == 'Voting Classifier Hard':
+                continue
+            # create a RandomizedSearchCV
+            rscv = RandomizedSearchCV(value, param_distributions=param_grids[key], n_iter=2, cv=10, random_state=42,
+                                      verbose=2,
+                                      n_jobs=-1, scoring='accuracy')
+            rscv.fit(X_train[curr_features], y_train)
+            best_estimators[key+ " tuned "+str(curr_features)] = rscv.best_estimator_
+            # predict values
+            prediction = rscv.best_estimator_.predict(X_test[curr_features])
+            # calculate accuracy
+            accuracy = accuracy_score(y_test, prediction)
+            accuracy_dict[key + " tuned "+str(curr_features)] = accuracy
+            cross_val_dict[key + " tuned "+str(curr_features)] = rscv.best_score_
+            print("Finished tuning for: ", key)
+
+        # create a list of tuples of the best estimators for Voting Classifier
+        best_estimators_list = [(key, value) for key, value in best_estimators.items() if
+                                key != 'Naive Bayes Classifier']
+
+        # create a new Voting Classifier with best estimators
+        voting_clf_tuned_h = VotingClassifier(estimators=best_estimators_list, voting='hard')
+        voting_clf_tuned_s = VotingClassifier(estimators=best_estimators_list, voting='soft')
+
+        # fit the Voting Classifiers
+        voting_clf_tuned_h.fit(X_train[curr_features], y_train)
+        voting_clf_tuned_s.fit(X_train[curr_features], y_train)
+        # predict values
+        prediction_h = voting_clf_tuned_h.predict(X_test[curr_features])
+        prediction_s = voting_clf_tuned_s.predict(X_test[curr_features])
+        # calculate accuracy
+        accuracy_h = accuracy_score(y_test, prediction_h)
+        accuracy_s = accuracy_score(y_test, prediction_s)
+        accuracy_dict['Voting Classifier Hard tuned '+str(curr_features)] = accuracy_h
+        accuracy_dict['Voting Classifier Soft tuned '+str(curr_features)] = accuracy_s
+        cross_val_dict['Voting Classifier Hard tuned '+str(curr_features)] = voting_clf_tuned_h.score(X_train[curr_features], y_train)
+        cross_val_dict['Voting Classifier Soft tuned '+str(curr_features)] = voting_clf_tuned_s.score(X_train[curr_features], y_train)
+
+
+    # sort cross_val_dict and accuracy_dict
+    cross_val_dict_sorted = dict(sorted(cross_val_dict.items(), key=lambda item: item[1], reverse=True))
+    accuracy_dict_sorted = dict(sorted(accuracy_dict.items(), key=lambda item: item[1], reverse=True))
+    print(cross_val_dict_sorted)
+    print(accuracy_dict_sorted)
+
+    # save the results to a file
+    results = {'cross_val_dict': cross_val_dict_sorted, 'accuracy_dict': accuracy_dict_sorted, 'feature_importance_values': feature_importance_values_sorted, 'best_estimators': best_estimators}
+    results_df = pd.DataFrame.from_dict(results)
+    results_df.to_csv('results.csv')
+
+    # Write the dictionary to a JSON file
+    file_path = "results.json"
+    with open(file_path, "w") as json_file:
+        json.dump(results, json_file)
 
 if __name__ == "__main__":
     main()
