@@ -413,7 +413,9 @@ def main():
     # create a parameter grid for Naive Bayes Classifier
     param_grid_nb = {}
     # create a parameter grid for XGBoost Classifier
-    param_grid_xgb = {'n_estimators': randint(10, 1000), 'max_depth': randint(1, 100), 'learning_rate': uniform(0, 1)}
+    param_grid_xgb = {'n_estimators': randint(10, 1000), 'max_depth': randint(1, 100), 'learning_rate': uniform(0, 1),
+                      'colsample_bytree': uniform(0.5, 0.5), 'subsample': uniform(0.5, 0.5), 'gamma': uniform(0, 5),
+                      'scale_pos_weight': uniform(0.1, 10)}
     # create a parameter grid for LightGBM Classifier
     param_grid_lgbm = {'n_estimators': randint(10, 1000), 'max_depth': randint(1, 100), 'learning_rate': uniform(0, 1)}
 
@@ -438,7 +440,7 @@ def main():
         if key == 'Voting Classifier Soft' or key == 'Voting Classifier Hard':
             continue
         # create a RandomizedSearchCV
-        rscv = RandomizedSearchCV(value, param_distributions=param_grids[key], n_iter=20, cv=10, random_state=42, verbose=2,
+        rscv = RandomizedSearchCV(value, param_distributions=param_grids[key], n_iter=50, cv=10, random_state=42, verbose=2,
                                   n_jobs=-1, scoring='accuracy')
         rscv.fit(X_train[all_usable_features], y_train)
         best_estimators[key+" tuned "+str(all_usable_features)] = rscv.best_estimator_
@@ -485,7 +487,7 @@ def main():
             if key == 'Voting Classifier Soft' or key == 'Voting Classifier Hard':
                 continue
             # create a RandomizedSearchCV
-            rscv = RandomizedSearchCV(value, param_distributions=param_grids[key], n_iter=2, cv=10, random_state=42,
+            rscv = RandomizedSearchCV(value, param_distributions=param_grids[key], n_iter=50, cv=10, random_state=42,
                                       verbose=2,
                                       n_jobs=-1, scoring='accuracy')
             rscv.fit(X_train[curr_features], y_train)
@@ -528,9 +530,11 @@ def main():
     print(accuracy_dict_sorted)
 
     # save the results to a file
-    results = {'cross_val_dict': cross_val_dict_sorted, 'accuracy_dict': accuracy_dict_sorted, 'feature_importance_values': feature_importance_values_sorted, 'best_estimators': best_estimators}
+    results = {'cross_val_dict': cross_val_dict_sorted, 'accuracy_dict': accuracy_dict_sorted, 'best_estimators': best_estimators}
     results_df = pd.DataFrame.from_dict(results)
     results_df.to_csv('results.csv')
+    features_df = pd.DataFrame.from_dict(feature_importance_values_sorted)
+    features_df.to_csv('feature_importance.csv')
 
     # Write the dictionary to a JSON file
     file_path = "results.json"
