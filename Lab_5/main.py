@@ -326,14 +326,17 @@ def main():
     np.random.seed(42)
     #print(len(all_combinations))
     num_of_combinations_to_check = 300
-    combinations_to_check = np.random.choice(len(all_combinations), num_of_combinations_to_check, replace=False)
+    combinations_indexes_to_check = np.random.choice(len(all_combinations), num_of_combinations_to_check, replace=False)
+
+    print(combinations_indexes_to_check)
+
 
     accuracy_for_combinations = {}
     cross_val_for_combinations = {}
     # initialize a dictionary to store feature importance values
     feature_importance_values = {feature: [0, 0, 0] for feature in X_train.columns}
 
-    for index, i in enumerate(combinations_to_check):
+    for index, i in enumerate(combinations_indexes_to_check):
         curr_combination = list(all_combinations[i])
         # do cross validation
         cv_scores = cross_val_score(xgb_clf, X_train[curr_combination], y_train, cv=10, n_jobs=-1, verbose=0).mean()
@@ -386,7 +389,7 @@ def main():
     # create a list of combinations to check
     combinations_to_check = []
     for i, key in enumerate(cross_val_for_combinations_sorted.items()):
-        if i >= 10:
+        if i >= 20:
             break
         combinations_to_check.append(list(key[0]))
 
@@ -522,6 +525,190 @@ def main():
         cross_val_dict['Voting Classifier Hard tuned '+str(curr_features)] = voting_clf_tuned_h.score(X_train[curr_features], y_train)
         cross_val_dict['Voting Classifier Soft tuned '+str(curr_features)] = voting_clf_tuned_s.score(X_train[curr_features], y_train)
 
+
+    # sort cross_val_dict and accuracy_dict
+    # cross_val_dict_sorted = dict(sorted(cross_val_dict.items(), key=lambda item: item[1], reverse=True))
+    # accuracy_dict_sorted = dict(sorted(accuracy_dict.items(), key=lambda item: item[1], reverse=True))
+    # print(cross_val_dict_sorted)
+    # print(accuracy_dict_sorted)
+
+    # # save the results to a file
+    # results = {'cross_val_dict': cross_val_dict_sorted, 'accuracy_dict': accuracy_dict_sorted, 'best_estimators': best_estimators}
+    # results_df = pd.DataFrame.from_dict(results)
+    # results_df.to_csv('results_3.csv')
+    # features_df = pd.DataFrame.from_dict(feature_importance_values_sorted)
+    # features_df.to_csv('feature_importance_3.csv')
+
+    X_train_scaled = X_train.copy()
+    X_test_scaled = X_test.copy()
+
+    # scale the data
+    scaller = RobustScaler()
+    X_train_scaled[all_usable_features] = scaller.fit_transform(X_train[all_usable_features])
+    X_test_scaled[all_usable_features] = scaller.transform(X_test[all_usable_features])
+
+    accuracy_for_combinations = {}
+    cross_val_for_combinations = {}
+
+    for index, i in enumerate(combinations_indexes_to_check):
+        curr_combination = list(all_combinations[i])
+        # do cross validation
+        cv_scores = cross_val_score(xgb_clf, X_train_scaled[curr_combination], y_train, cv=10, n_jobs=-1,
+                                    verbose=0).mean()
+        cross_val_for_combinations[tuple(curr_combination)] = [cv_scores, 'xgb', 'scaled']
+        xgb_clf.fit(X_train_scaled[curr_combination], y_train)
+        prediction = xgb_clf.predict(X_test_scaled[curr_combination])
+        # calculate accuracy
+        accuracy = accuracy_score(y_test, prediction)
+        accuracy_for_combinations[tuple(curr_combination)] = [accuracy, 'xgb', 'scaled']
+
+        for feature, importance in zip(curr_combination, xgb_clf.feature_importances_):
+            feature_importance_values[feature][0] += importance
+            feature_importance_values[feature][1] += 1
+            feature_importance_values[feature][2] += cv_scores
+
+        # do cross validation
+        cv_scores = cross_val_score(rfc_clf, X_train_scaled[curr_combination], y_train, cv=10, n_jobs=-1).mean()
+        cross_val_for_combinations[tuple(curr_combination)] = [cv_scores, 'rfc', 'scaled']
+        rfc_clf.fit(X_train_scaled[curr_combination], y_train)
+        prediction = rfc_clf.predict(X_test_scaled[curr_combination])
+        # calculate accuracy
+        accuracy = accuracy_score(y_test, prediction)
+        accuracy_for_combinations[tuple(curr_combination)] = [accuracy, 'rfc', 'scaled']
+        print("Finished cobinations: ", index, " out of ", num_of_combinations_to_check)
+
+    # sort the accuracy_for_combinations dictionary and cross_val_for_combinations dictionary
+    accuracy_for_combinations_sorted = dict(
+        sorted(accuracy_for_combinations.items(), key=lambda item: item[1][0], reverse=True))
+    cross_val_for_combinations_sorted = dict(
+        sorted(cross_val_for_combinations.items(), key=lambda item: item[1][0], reverse=True))
+
+    # calculate mean feature importance values
+    for feature in feature_importance_values:
+        if feature_importance_values[feature][1] != 0:
+            feature_importance_values[feature][0] /= feature_importance_values[feature][1]
+            feature_importance_values[feature][2] /= feature_importance_values[feature][1]
+
+    # sort the feature_importance_values dictionary
+    feature_importance_values_sorted = dict(
+        sorted(feature_importance_values.items(), key=lambda item: item[1][0], reverse=True))
+
+    print(accuracy_for_combinations_sorted)
+    print(cross_val_for_combinations_sorted)
+    print(feature_importance_values_sorted)
+
+    # # print cross validation scores and accuracy
+    # print(cross_val_dict)
+    # print(accuracy_dict)
+    # #print(best_estimators)
+
+    ### hyperparameter tuning for different combinations of features
+
+    # create a list of combinations to check
+    combinations_to_check = []
+    for i, key in enumerate(cross_val_for_combinations_sorted.items()):
+        if i >= 20:
+            break
+        combinations_to_check.append(list(key[0]))
+
+    # create a vector of 5 most important features
+    most_important_features = [feature for feature in feature_importance_values_sorted][:5]
+    for i, key in enumerate(feature_importance_values_sorted):
+        if i >= 5:
+            combinations_to_check.append(list(most_important_features))
+            most_important_features.append(key)
+        if i >= 10:
+            break
+
+    for key, value in classifiers_for_tuning.items():
+        if key == 'Voting Classifier Soft' or key == 'Voting Classifier Hard':
+            continue
+        # create a RandomizedSearchCV
+        rscv = RandomizedSearchCV(value, param_distributions=param_grids[key], n_iter=50, cv=10, random_state=42,
+                                  verbose=2,
+                                  n_jobs=-1, scoring='accuracy')
+        rscv.fit(X_train_scaled[all_usable_features], y_train)
+        best_estimators[key + " scaled tuned " + str(all_usable_features)] = rscv.best_estimator_
+        # predict values
+        prediction = rscv.best_estimator_.predict(X_test_scaled[all_usable_features])
+        # calculate accuracy
+        accuracy = accuracy_score(y_test, prediction)
+        accuracy_dict[key + " scaled tuned " + str(all_usable_features)] = accuracy
+        cross_val_dict[key + " scaled tuned " + str(all_usable_features)] = rscv.best_score_
+        print("Finished tuning for: ", key)
+
+    # create a list of tuples of the best estimators for Voting Classifier
+    best_estimators_list = [(key, value) for key, value in best_estimators.items() if key != 'Naive Bayes Classifier']
+
+    # create a new Voting Classifier with best estimators
+    voting_clf_tuned_h = VotingClassifier(estimators=best_estimators_list, voting='hard')
+    voting_clf_tuned_s = VotingClassifier(estimators=best_estimators_list, voting='soft')
+
+    # fit the Voting Classifiers
+    voting_clf_tuned_h.fit(X_train_scaled[all_usable_features], y_train)
+    voting_clf_tuned_s.fit(X_train_scaled[all_usable_features], y_train)
+    # predict values
+    prediction_h = voting_clf_tuned_h.predict(X_test_scaled[all_usable_features])
+    prediction_s = voting_clf_tuned_s.predict(X_test_scaled[all_usable_features])
+    # calculate accuracy
+    accuracy_h = accuracy_score(y_test, prediction_h)
+    accuracy_s = accuracy_score(y_test, prediction_s)
+    accuracy_dict["Voting Classifier Hard scaled tuned " + str(all_usable_features)] = accuracy_h
+    accuracy_dict["Voting Classifier Soft scaled tuned " + str(all_usable_features)] = accuracy_s
+    cross_val_dict["Voting Classifier Hard scaled tuned " + str(all_usable_features)] = voting_clf_tuned_h.score(
+        X_train_scaled[all_usable_features], y_train)
+    cross_val_dict["Voting Classifier Soft scaled tuned " + str(all_usable_features)] = voting_clf_tuned_s.score(
+        X_train_scaled[all_usable_features], y_train)
+
+    # print cross validation scores and accuracy
+    # print(cross_val_dict)
+    # print(accuracy_dict)
+    # print(best_estimators)
+
+    # create a loop to check different combinations of features and use different models and tune their hyperparameters
+    for features in combinations_to_check:
+        curr_features = features
+        print("Checking features: ", curr_features)
+        for key, value in classifiers_for_tuning.items():
+            if key == 'Voting Classifier Soft' or key == 'Voting Classifier Hard':
+                continue
+            # create a RandomizedSearchCV
+            rscv = RandomizedSearchCV(value, param_distributions=param_grids[key], n_iter=50, cv=10, random_state=42,
+                                      verbose=2,
+                                      n_jobs=-1, scoring='accuracy')
+            rscv.fit(X_train_scaled[curr_features], y_train)
+            best_estimators[key + " scaled tuned " + str(curr_features)] = rscv.best_estimator_
+            # predict values
+            prediction = rscv.best_estimator_.predict(X_test_scaled[curr_features])
+            # calculate accuracy
+            accuracy = accuracy_score(y_test, prediction)
+            accuracy_dict[key + " scaled tuned " + str(curr_features)] = accuracy
+            cross_val_dict[key + " scaled tuned " + str(curr_features)] = rscv.best_score_
+            print("Finished tuning for: ", key)
+
+        # create a list of tuples of the best estimators for Voting Classifier
+        best_estimators_list = [(key, value) for key, value in best_estimators.items() if
+                                key != 'Naive Bayes Classifier']
+
+        # create a new Voting Classifier with best estimators
+        voting_clf_tuned_h = VotingClassifier(estimators=best_estimators_list, voting='hard')
+        voting_clf_tuned_s = VotingClassifier(estimators=best_estimators_list, voting='soft')
+
+        # fit the Voting Classifiers
+        voting_clf_tuned_h.fit(X_train_scaled[curr_features], y_train)
+        voting_clf_tuned_s.fit(X_train_scaled[curr_features], y_train)
+        # predict values
+        prediction_h = voting_clf_tuned_h.predict(X_test_scaled[curr_features])
+        prediction_s = voting_clf_tuned_s.predict(X_test_scaled[curr_features])
+        # calculate accuracy
+        accuracy_h = accuracy_score(y_test, prediction_h)
+        accuracy_s = accuracy_score(y_test, prediction_s)
+        accuracy_dict['Voting Classifier Hard scaled tuned ' + str(curr_features)] = accuracy_h
+        accuracy_dict['Voting Classifier Soft scaled tuned ' + str(curr_features)] = accuracy_s
+        cross_val_dict['Voting Classifier Hard scaled tuned ' + str(curr_features)] = voting_clf_tuned_h.score(
+            X_train_scaled[curr_features], y_train)
+        cross_val_dict['Voting Classifier Soft scaled tuned ' + str(curr_features)] = voting_clf_tuned_s.score(
+            X_train_scaled[curr_features], y_train)
 
     # sort cross_val_dict and accuracy_dict
     cross_val_dict_sorted = dict(sorted(cross_val_dict.items(), key=lambda item: item[1], reverse=True))
