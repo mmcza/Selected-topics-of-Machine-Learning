@@ -160,7 +160,7 @@ def main():
                     'embarked_encoded', 'sibsp', 'parch', 'age_group_encoded', 'is_alone', 'multiple_cabins']].corr()
 
     # Create subplots
-    fig, axes = plt.subplots(3, 1, figsize=(5, 15))
+    fig, axes = plt.subplots(3, 1, figsize=(10, 15))
     # Plot correlation matrix 1
     sns.heatmap(corr, annot=True, cmap='coolwarm', fmt=".2f", ax=axes[0])
     axes[0].set_title('Initial correlation Matrix')
@@ -195,7 +195,7 @@ def main():
                                         'parch', 'age_group_encoded', 'is_alone', 'multiple_cabins']].corr()
 
     # Create subplots
-    fig, axes = plt.subplots(3, 1, figsize=(5, 15))
+    fig, axes = plt.subplots(3, 1, figsize=(10, 15))
     # Plot correlation matrix 1
     sns.heatmap(corr, annot=True, cmap='coolwarm', fmt=".2f", ax=axes[0])
     axes[0].set_title('Initial correlation Matrix')
