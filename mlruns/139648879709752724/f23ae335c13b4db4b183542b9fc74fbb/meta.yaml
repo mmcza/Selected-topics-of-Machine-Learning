@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/f23ae335c13b4db4b183542b9fc74fbb/artifacts
+end_time: 1713965790330
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: f23ae335c13b4db4b183542b9fc74fbb
+run_name: rogue-fly-316
+run_uuid: f23ae335c13b4db4b183542b9fc74fbb
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965787791
+status: 3
+tags: []
+user_id: marci

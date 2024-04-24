@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/839f7457a87a427fa1844e8f1e6ec881/artifacts
+end_time: 1713963680040
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: 839f7457a87a427fa1844e8f1e6ec881
+run_name: able-hen-781
+run_uuid: 839f7457a87a427fa1844e8f1e6ec881
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713963667683
+status: 3
+tags: []
+user_id: marci

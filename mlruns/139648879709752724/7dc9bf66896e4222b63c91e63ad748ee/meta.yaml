@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/7dc9bf66896e4222b63c91e63ad748ee/artifacts
+end_time: 1713965757355
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: 7dc9bf66896e4222b63c91e63ad748ee
+run_name: fun-fish-818
+run_uuid: 7dc9bf66896e4222b63c91e63ad748ee
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965755334
+status: 3
+tags: []
+user_id: marci

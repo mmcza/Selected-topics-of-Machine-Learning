@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/093b396e117746aca8b0c9c6526e47b1/artifacts
+end_time: 1713963224259
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: 093b396e117746aca8b0c9c6526e47b1
+run_name: dashing-snake-656
+run_uuid: 093b396e117746aca8b0c9c6526e47b1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713963218501
+status: 3
+tags: []
+user_id: marci

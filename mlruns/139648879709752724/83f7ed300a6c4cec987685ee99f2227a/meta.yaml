@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/83f7ed300a6c4cec987685ee99f2227a/artifacts
+end_time: 1713965731435
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: 83f7ed300a6c4cec987685ee99f2227a
+run_name: bold-dove-611
+run_uuid: 83f7ed300a6c4cec987685ee99f2227a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965729485
+status: 3
+tags: []
+user_id: marci

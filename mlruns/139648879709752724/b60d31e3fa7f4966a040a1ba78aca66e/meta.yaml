@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/b60d31e3fa7f4966a040a1ba78aca66e/artifacts
+end_time: 1713965729467
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: b60d31e3fa7f4966a040a1ba78aca66e
+run_name: spiffy-foal-908
+run_uuid: b60d31e3fa7f4966a040a1ba78aca66e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965724775
+status: 3
+tags: []
+user_id: marci

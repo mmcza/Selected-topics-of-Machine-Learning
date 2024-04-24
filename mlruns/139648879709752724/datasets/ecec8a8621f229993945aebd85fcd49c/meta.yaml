@@ -1,0 +1,10 @@
+digest: 8412fe0d
+name: dataset
+profile: '{"features_shape": [942, 4], "features_size": 3768, "features_nbytes": 30144,
+  "targets_shape": [942], "targets_size": 942, "targets_nbytes": 7536}'
+schema: '{"mlflow_tensorspec": {"features": "[{\"type\": \"tensor\", \"tensor-spec\":
+  {\"dtype\": \"float64\", \"shape\": [-1, 4]}}]", "targets": "[{\"type\": \"tensor\",
+  \"tensor-spec\": {\"dtype\": \"float64\", \"shape\": [-1]}}]"}}'
+source: '{"tags": {"mlflow.user": "marci", "mlflow.source.name": "C:\\Users\\marci\\Documents\\GitHub\\Selected-issues-of-Machine-Learning\\Lab_6\\task4_autologgin_for_titanic.py",
+  "mlflow.source.type": "LOCAL", "mlflow.source.git.commit": "2658eefca1ee683fbbde640cc3f025cd2704a23a"}}'
+source_type: code

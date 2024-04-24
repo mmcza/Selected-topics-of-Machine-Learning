@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/5ea53ea2fe074034a50a0e39fcf96fa2/artifacts
+end_time: 1713963283298
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: 5ea53ea2fe074034a50a0e39fcf96fa2
+run_name: defiant-grub-645
+run_uuid: 5ea53ea2fe074034a50a0e39fcf96fa2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713963277829
+status: 3
+tags: []
+user_id: marci

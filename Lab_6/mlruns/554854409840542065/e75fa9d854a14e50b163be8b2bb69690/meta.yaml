@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/marci/Documents/GitHub/Selected-issues-of-Machine-Learning/Lab_6/mlruns/554854409840542065/e75fa9d854a14e50b163be8b2bb69690/artifacts
+end_time: 1713962120939
+entry_point_name: ''
+experiment_id: '554854409840542065'
+lifecycle_stage: active
+run_id: e75fa9d854a14e50b163be8b2bb69690
+run_name: bemused-fawn-114
+run_uuid: e75fa9d854a14e50b163be8b2bb69690
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713962115384
+status: 3
+tags: []
+user_id: marci

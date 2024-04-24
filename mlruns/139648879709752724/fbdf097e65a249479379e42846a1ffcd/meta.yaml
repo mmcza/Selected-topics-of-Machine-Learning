@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/fbdf097e65a249479379e42846a1ffcd/artifacts
+end_time: 1713965784565
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: fbdf097e65a249479379e42846a1ffcd
+run_name: judicious-roo-561
+run_uuid: fbdf097e65a249479379e42846a1ffcd
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965781233
+status: 3
+tags: []
+user_id: marci

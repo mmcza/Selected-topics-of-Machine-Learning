@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/c8f9e77822c548f5b8404a145e66797c/artifacts
+end_time: 1713963201266
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: c8f9e77822c548f5b8404a145e66797c
+run_name: fun-calf-919
+run_uuid: c8f9e77822c548f5b8404a145e66797c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713963195598
+status: 3
+tags: []
+user_id: marci

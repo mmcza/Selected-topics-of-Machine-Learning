@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/2478db854a614c288ef7f11e316cac16/artifacts
+end_time: 1713965780905
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: 2478db854a614c288ef7f11e316cac16
+run_name: amazing-frog-93
+run_uuid: 2478db854a614c288ef7f11e316cac16
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965778070
+status: 3
+tags: []
+user_id: marci

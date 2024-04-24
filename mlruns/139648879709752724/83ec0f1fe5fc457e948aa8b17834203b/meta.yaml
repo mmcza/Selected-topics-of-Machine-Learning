@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/83ec0f1fe5fc457e948aa8b17834203b/artifacts
+end_time: 1713965814961
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: 83ec0f1fe5fc457e948aa8b17834203b
+run_name: placid-sponge-540
+run_uuid: 83ec0f1fe5fc457e948aa8b17834203b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965809630
+status: 3
+tags: []
+user_id: marci

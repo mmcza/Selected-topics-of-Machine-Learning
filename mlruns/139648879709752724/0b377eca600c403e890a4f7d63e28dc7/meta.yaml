@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/0b377eca600c403e890a4f7d63e28dc7/artifacts
+deleted_time: 1713966892120
+end_time: null
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: deleted
+run_id: 0b377eca600c403e890a4f7d63e28dc7
+run_name: zealous-bird-330
+run_uuid: 0b377eca600c403e890a4f7d63e28dc7
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713966546787
+status: 1
+tags: []
+user_id: marci

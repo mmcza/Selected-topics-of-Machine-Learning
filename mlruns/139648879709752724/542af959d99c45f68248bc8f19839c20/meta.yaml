@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/542af959d99c45f68248bc8f19839c20/artifacts
+end_time: 1713965747134
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: 542af959d99c45f68248bc8f19839c20
+run_name: flawless-elk-233
+run_uuid: 542af959d99c45f68248bc8f19839c20
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965745188
+status: 3
+tags: []
+user_id: marci

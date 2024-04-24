@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/465603258940726245/c9c20f44e78847fb8ef54b5c38697e14/artifacts
+end_time: 1713961023787
+entry_point_name: ''
+experiment_id: '465603258940726245'
+lifecycle_stage: active
+run_id: c9c20f44e78847fb8ef54b5c38697e14
+run_name: languid-mouse-402
+run_uuid: c9c20f44e78847fb8ef54b5c38697e14
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713961019605
+status: 3
+tags: []
+user_id: marci

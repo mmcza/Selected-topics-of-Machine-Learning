@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/ffb8fbdffe424011b3838f63969b3cff/artifacts
+end_time: 1713965822018
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: ffb8fbdffe424011b3838f63969b3cff
+run_name: languid-bat-90
+run_uuid: ffb8fbdffe424011b3838f63969b3cff
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965818403
+status: 3
+tags: []
+user_id: marci

@@ -1,0 +1,18 @@
+{
+  "pclass": 532.798783197999,
+  "sibsp": 82.01734285056591,
+  "parch": 24.368251860141754,
+  "family_size": 130.51706121861935,
+  "fare_per_person": 754.8856303542852,
+  "is_alone": 2.0616150498390198,
+  "deck_encoded": 255.10005375742912,
+  "age_group_encoded": 459.0849839821458,
+  "title_categorical_encoded": 183.1212643235922,
+  "sex_encoded": 1858.9748031273484,
+  "embarked_encoded": 106.3654929921031,
+  "deck_encoded_no_missing": 162.8327930420637,
+  "multiple_cabins": 42.354140400886536,
+  "fare_per_person_binned": 3.9189610481262207,
+  "fare": 1014.4796504676342,
+  "fare_per_person_scaled": 139.48939898610115
+}

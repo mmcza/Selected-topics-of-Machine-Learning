@@ -1,0 +1,35 @@
+artifact_path: model
+flavors:
+  lightgbm:
+    code: null
+    data: model.pkl
+    lgb_version: 4.3.0
+    model_class: lightgbm.sklearn.LGBMClassifier
+  python_function:
+    data: model.pkl
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.lightgbm
+    python_version: 3.12.0
+mlflow_version: 2.12.1
+model_size_bytes: 344089
+model_uuid: fe9d36202bad49378cc227add765049f
+run_id: a3c7a4a72311412683b2d91d6a336251
+signature:
+  inputs: '[{"type": "double", "name": "pclass", "required": true}, {"type": "double",
+    "name": "sibsp", "required": true}, {"type": "double", "name": "parch", "required":
+    true}, {"type": "long", "name": "family_size", "required": true}, {"type": "double",
+    "name": "fare_per_person", "required": true}, {"type": "double", "name": "is_alone",
+    "required": true}, {"type": "double", "name": "deck_encoded", "required": true},
+    {"type": "double", "name": "age_group_encoded", "required": true}, {"type": "double",
+    "name": "title_categorical_encoded", "required": true}, {"type": "integer", "name":
+    "sex_encoded", "required": true}, {"type": "double", "name": "embarked_encoded",
+    "required": true}, {"type": "double", "name": "deck_encoded_no_missing", "required":
+    true}, {"type": "long", "name": "multiple_cabins", "required": true}, {"type":
+    "double", "name": "fare_per_person_binned", "required": true}, {"type": "double",
+    "name": "fare", "required": true}, {"type": "double", "name": "fare_per_person_scaled",
+    "required": true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "int32", "shape": [-1]}}]'
+  params: null
+utc_time_created: '2024-04-24 13:36:37.829660'

@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/126d676303a048819c8614dc642cdff2/artifacts
+end_time: 1713963306063
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: 126d676303a048819c8614dc642cdff2
+run_name: nebulous-seal-954
+run_uuid: 126d676303a048819c8614dc642cdff2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713963300401
+status: 3
+tags: []
+user_id: marci

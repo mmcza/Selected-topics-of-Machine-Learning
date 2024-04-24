@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/5a79b13e775a4614899747158e9f4451/artifacts
+end_time: 1713965808012
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: 5a79b13e775a4614899747158e9f4451
+run_name: popular-finch-247
+run_uuid: 5a79b13e775a4614899747158e9f4451
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965803384
+status: 3
+tags: []
+user_id: marci

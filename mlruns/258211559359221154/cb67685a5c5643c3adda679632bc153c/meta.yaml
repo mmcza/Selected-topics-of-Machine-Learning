@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/cb67685a5c5643c3adda679632bc153c/artifacts
+end_time: 1713963095136
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: cb67685a5c5643c3adda679632bc153c
+run_name: valuable-stork-890
+run_uuid: cb67685a5c5643c3adda679632bc153c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713963089691
+status: 3
+tags: []
+user_id: marci

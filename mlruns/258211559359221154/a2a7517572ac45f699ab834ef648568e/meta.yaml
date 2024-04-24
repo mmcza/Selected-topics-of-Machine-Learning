@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/a2a7517572ac45f699ab834ef648568e/artifacts
+end_time: 1713964311471
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: a2a7517572ac45f699ab834ef648568e
+run_name: exultant-fox-782
+run_uuid: a2a7517572ac45f699ab834ef648568e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713964302386
+status: 3
+tags: []
+user_id: marci

@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/1884f9b1c1ca43af97534d79a64d279f/artifacts
+end_time: 1713963277795
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: 1884f9b1c1ca43af97534d79a64d279f
+run_name: orderly-robin-232
+run_uuid: 1884f9b1c1ca43af97534d79a64d279f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713963271020
+status: 3
+tags: []
+user_id: marci

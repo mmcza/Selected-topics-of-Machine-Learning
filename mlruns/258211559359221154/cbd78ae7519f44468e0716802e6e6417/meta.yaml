@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/cbd78ae7519f44468e0716802e6e6417/artifacts
+end_time: 1713963111400
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: cbd78ae7519f44468e0716802e6e6417
+run_name: defiant-grouse-427
+run_uuid: cbd78ae7519f44468e0716802e6e6417
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713963106022
+status: 3
+tags: []
+user_id: marci

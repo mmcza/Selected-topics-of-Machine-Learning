@@ -1,0 +1,1 @@
+{"sex_encoded": 41, "pclass": 26, "fare": 166, "deck_encoded": 21, "title_categorical_encoded": 31, "age_group_encoded": 91, "fare_per_person": 144, "sibsp": 9, "family_size": 39, "multiple_cabins": 19, "embarked_encoded": 23, "parch": 7, "deck_encoded_no_missing": 18}

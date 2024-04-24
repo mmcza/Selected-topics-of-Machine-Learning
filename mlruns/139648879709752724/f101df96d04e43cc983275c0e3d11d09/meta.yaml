@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/f101df96d04e43cc983275c0e3d11d09/artifacts
+end_time: 1713965759336
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: f101df96d04e43cc983275c0e3d11d09
+run_name: persistent-shoat-234
+run_uuid: f101df96d04e43cc983275c0e3d11d09
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965757374
+status: 3
+tags: []
+user_id: marci

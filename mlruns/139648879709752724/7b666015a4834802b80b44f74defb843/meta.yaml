@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/7b666015a4834802b80b44f74defb843/artifacts
+end_time: 1713965773200
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: 7b666015a4834802b80b44f74defb843
+run_name: intrigued-newt-541
+run_uuid: 7b666015a4834802b80b44f74defb843
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965770405
+status: 3
+tags: []
+user_id: marci

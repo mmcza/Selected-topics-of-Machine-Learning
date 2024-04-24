@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/a3081a0dd75b42059f14027ea3c66a68/artifacts
+end_time: 1713963975130
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: a3081a0dd75b42059f14027ea3c66a68
+run_name: worried-wasp-83
+run_uuid: a3081a0dd75b42059f14027ea3c66a68
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713963956092
+status: 3
+tags: []
+user_id: marci

@@ -1,0 +1,1 @@
+[('rf', RandomForestClassifier(random_state=42)), ('lr', LogisticRegression(max_iter=1000, random_state=42)), ('dt', DecisionTreeClassifier(random_state=42)), ('svm', SVC(probability=True, random_state=42)), ('knn', KNeighborsClassifier()), ('nb', GaussianNB()), ('xgb', XGBClassifier(random_state=42)), ('lgbm', LGBMClassifier(random_state=42, verbosity=0))]

@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/b83e3cc3c35d476b905a243c158a49ed/artifacts
+end_time: 1713964320369
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: b83e3cc3c35d476b905a243c158a49ed
+run_name: merciful-crab-404
+run_uuid: b83e3cc3c35d476b905a243c158a49ed
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713964311501
+status: 3
+tags: []
+user_id: marci

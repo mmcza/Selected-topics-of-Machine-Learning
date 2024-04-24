@@ -1,0 +1,18 @@
+{
+  "pclass": 64,
+  "sibsp": 49,
+  "parch": 36,
+  "family_size": 57,
+  "fare_per_person": 746,
+  "is_alone": 2,
+  "deck_encoded": 123,
+  "age_group_encoded": 392,
+  "title_categorical_encoded": 109,
+  "sex_encoded": 72,
+  "embarked_encoded": 110,
+  "deck_encoded_no_missing": 174,
+  "multiple_cabins": 43,
+  "fare_per_person_binned": 4,
+  "fare": 884,
+  "fare_per_person_scaled": 135
+}

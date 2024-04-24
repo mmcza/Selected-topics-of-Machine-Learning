@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/ab87a1fff94d4a6e90ee6b75dc925732/artifacts
+end_time: 1713965741252
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: ab87a1fff94d4a6e90ee6b75dc925732
+run_name: nervous-smelt-976
+run_uuid: ab87a1fff94d4a6e90ee6b75dc925732
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965739310
+status: 3
+tags: []
+user_id: marci

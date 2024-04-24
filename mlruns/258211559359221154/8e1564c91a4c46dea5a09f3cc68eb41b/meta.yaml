@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/8e1564c91a4c46dea5a09f3cc68eb41b/artifacts
+end_time: 1713963100568
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: 8e1564c91a4c46dea5a09f3cc68eb41b
+run_name: agreeable-fowl-465
+run_uuid: 8e1564c91a4c46dea5a09f3cc68eb41b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713963095169
+status: 3
+tags: []
+user_id: marci

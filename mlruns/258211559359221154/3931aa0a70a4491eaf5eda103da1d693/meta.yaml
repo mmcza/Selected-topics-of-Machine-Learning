@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/3931aa0a70a4491eaf5eda103da1d693/artifacts
+end_time: 1713964359905
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: 3931aa0a70a4491eaf5eda103da1d693
+run_name: incongruous-ram-298
+run_uuid: 3931aa0a70a4491eaf5eda103da1d693
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713964283960
+status: 3
+tags: []
+user_id: marci

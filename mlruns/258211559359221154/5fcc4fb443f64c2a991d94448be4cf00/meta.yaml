@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/5fcc4fb443f64c2a991d94448be4cf00/artifacts
+end_time: 1713963716250
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: 5fcc4fb443f64c2a991d94448be4cf00
+run_name: capricious-fox-615
+run_uuid: 5fcc4fb443f64c2a991d94448be4cf00
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713963704932
+status: 3
+tags: []
+user_id: marci

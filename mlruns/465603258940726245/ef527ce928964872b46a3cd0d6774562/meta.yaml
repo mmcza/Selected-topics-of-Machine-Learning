@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/465603258940726245/ef527ce928964872b46a3cd0d6774562/artifacts
+end_time: 1713961124646
+entry_point_name: ''
+experiment_id: '465603258940726245'
+lifecycle_stage: active
+run_id: ef527ce928964872b46a3cd0d6774562
+run_name: monumental-fish-367
+run_uuid: ef527ce928964872b46a3cd0d6774562
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713961121187
+status: 3
+tags: []
+user_id: marci

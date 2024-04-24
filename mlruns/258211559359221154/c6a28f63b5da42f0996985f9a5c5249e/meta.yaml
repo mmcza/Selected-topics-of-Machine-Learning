@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/c6a28f63b5da42f0996985f9a5c5249e/artifacts
+end_time: 1713963300367
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: c6a28f63b5da42f0996985f9a5c5249e
+run_name: sneaky-goose-963
+run_uuid: c6a28f63b5da42f0996985f9a5c5249e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713963294727
+status: 3
+tags: []
+user_id: marci

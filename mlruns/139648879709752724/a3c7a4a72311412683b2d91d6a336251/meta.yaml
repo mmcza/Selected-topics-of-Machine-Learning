@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/a3c7a4a72311412683b2d91d6a336251/artifacts
+end_time: 1713965800790
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: a3c7a4a72311412683b2d91d6a336251
+run_name: gentle-mink-697
+run_uuid: a3c7a4a72311412683b2d91d6a336251
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965797244
+status: 3
+tags: []
+user_id: marci

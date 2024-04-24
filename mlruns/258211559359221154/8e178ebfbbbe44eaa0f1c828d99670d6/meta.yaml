@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/8e178ebfbbbe44eaa0f1c828d99670d6/artifacts
+end_time: 1713964021191
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: 8e178ebfbbbe44eaa0f1c828d99670d6
+run_name: carefree-conch-11
+run_uuid: 8e178ebfbbbe44eaa0f1c828d99670d6
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713963855007
+status: 3
+tags: []
+user_id: marci

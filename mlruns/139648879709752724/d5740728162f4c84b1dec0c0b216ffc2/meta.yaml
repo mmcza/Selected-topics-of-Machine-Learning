@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/d5740728162f4c84b1dec0c0b216ffc2/artifacts
+end_time: 1713965745169
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: d5740728162f4c84b1dec0c0b216ffc2
+run_name: dazzling-loon-117
+run_uuid: d5740728162f4c84b1dec0c0b216ffc2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965743226
+status: 3
+tags: []
+user_id: marci

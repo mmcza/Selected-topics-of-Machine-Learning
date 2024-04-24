@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/marci/Documents/GitHub/Selected-issues-of-Machine-Learning/Lab_6/mlruns/554854409840542065/1ac50acffda8479889cb2a00945e26fe/artifacts
+end_time: 1713962142234
+entry_point_name: ''
+experiment_id: '554854409840542065'
+lifecycle_stage: active
+run_id: 1ac50acffda8479889cb2a00945e26fe
+run_name: angry-kite-715
+run_uuid: 1ac50acffda8479889cb2a00945e26fe
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713962092141
+status: 3
+tags: []
+user_id: marci

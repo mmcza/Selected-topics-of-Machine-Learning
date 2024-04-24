@@ -11,3 +11,7 @@ missingno
 lightgbm
 dask
 dask_ml
+mlflow
+keras
+hyperopt
+tensorflow

@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/b8855dbbd5b04e7da4314fce65a0b2ba/artifacts
+end_time: 1713965743208
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: b8855dbbd5b04e7da4314fce65a0b2ba
+run_name: industrious-bear-968
+run_uuid: b8855dbbd5b04e7da4314fce65a0b2ba
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965741271
+status: 3
+tags: []
+user_id: marci

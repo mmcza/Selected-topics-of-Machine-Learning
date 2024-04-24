@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/0bf1e3a0a2744012bd57200c52ee20d3/artifacts
+end_time: 1713965733384
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: 0bf1e3a0a2744012bd57200c52ee20d3
+run_name: unleashed-kit-417
+run_uuid: 0bf1e3a0a2744012bd57200c52ee20d3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965731453
+status: 3
+tags: []
+user_id: marci

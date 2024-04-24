@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/7ebd2ec122784ec9aa96bbadaefb0f80/artifacts
+end_time: 1713965755306
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: 7ebd2ec122784ec9aa96bbadaefb0f80
+run_name: treasured-fox-913
+run_uuid: 7ebd2ec122784ec9aa96bbadaefb0f80
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965753335
+status: 3
+tags: []
+user_id: marci

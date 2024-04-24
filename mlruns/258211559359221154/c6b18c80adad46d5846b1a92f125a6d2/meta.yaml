@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/c6b18c80adad46d5846b1a92f125a6d2/artifacts
+end_time: 1713964346861
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: c6b18c80adad46d5846b1a92f125a6d2
+run_name: rumbling-sponge-227
+run_uuid: c6b18c80adad46d5846b1a92f125a6d2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713964338072
+status: 3
+tags: []
+user_id: marci

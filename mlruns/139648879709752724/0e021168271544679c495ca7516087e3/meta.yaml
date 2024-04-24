@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/0e021168271544679c495ca7516087e3/artifacts
+end_time: 1713965737303
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: 0e021168271544679c495ca7516087e3
+run_name: rare-panda-386
+run_uuid: 0e021168271544679c495ca7516087e3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713965735368
+status: 3
+tags: []
+user_id: marci

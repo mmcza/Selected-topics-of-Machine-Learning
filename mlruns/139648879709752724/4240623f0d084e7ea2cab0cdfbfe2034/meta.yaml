@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/139648879709752724/4240623f0d084e7ea2cab0cdfbfe2034/artifacts
+end_time: 1713967857772
+entry_point_name: ''
+experiment_id: '139648879709752724'
+lifecycle_stage: active
+run_id: 4240623f0d084e7ea2cab0cdfbfe2034
+run_name: colorful-cub-138
+run_uuid: 4240623f0d084e7ea2cab0cdfbfe2034
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713967829441
+status: 3
+tags: []
+user_id: marci

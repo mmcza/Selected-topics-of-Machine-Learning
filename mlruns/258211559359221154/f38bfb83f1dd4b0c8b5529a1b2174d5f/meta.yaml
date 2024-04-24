@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/258211559359221154/f38bfb83f1dd4b0c8b5529a1b2174d5f/artifacts
+end_time: 1713963728265
+entry_point_name: ''
+experiment_id: '258211559359221154'
+lifecycle_stage: active
+run_id: f38bfb83f1dd4b0c8b5529a1b2174d5f
+run_name: bemused-quail-97
+run_uuid: f38bfb83f1dd4b0c8b5529a1b2174d5f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713963716286
+status: 3
+tags: []
+user_id: marci

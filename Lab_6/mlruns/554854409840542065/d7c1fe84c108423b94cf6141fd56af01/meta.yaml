@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/marci/Documents/GitHub/Selected-issues-of-Machine-Learning/Lab_6/mlruns/554854409840542065/d7c1fe84c108423b94cf6141fd56af01/artifacts
+end_time: 1713962110009
+entry_point_name: ''
+experiment_id: '554854409840542065'
+lifecycle_stage: active
+run_id: d7c1fe84c108423b94cf6141fd56af01
+run_name: loud-whale-805
+run_uuid: d7c1fe84c108423b94cf6141fd56af01
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1713962104651
+status: 3
+tags: []
+user_id: marci
