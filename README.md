@@ -1,4 +1,4 @@
-# Selected issues of Machine Learning - laboratory
+# Selected topics of Machine Learning - laboratory
 
 ## List of exercises
 | Laboratory #     | Topic                                                                                                                                           |
