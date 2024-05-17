@@ -10,6 +10,7 @@
 | [Lab #5](/Lab_5/) | Prediction of Titanic survivors, Feature engineering, Binary Classification, Classifiers comparison                                             |
 | [Lab #6](/Lab_6/) | MLflow *, MLOps, Saving model, parameters and statistics; autologging                                                                           |
 | [Lab #7](/Lab_7/) | TimeSeries, Darts, seasonality, NaiveDrift, NaiveSeasonal, ExponentialSmoothing, Theta                                                         |
+| [Lab #8](/Lab_8/) | Reinforcement Learning, Gymnasium, Q-learning, Reward function                                                         |
 
 
 \* to run [Lab #6](/Lab_6/) you need to have mlflow installed and run a command:
